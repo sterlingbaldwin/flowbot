@@ -23,9 +23,8 @@ def handle_command(command, channel):
         'commands': 'A list of commands for flowbot',
         'repo': 'A link to the flowbot github repo'
     }
-    EXAMPLE_COMMAND = commands.get('ddate')
-    response = "Not sure what you mean. Use the *" + EXAMPLE_COMMAND + \
-               "* command with numbers, delimited by spaces."
+    EXAMPLE_COMMAND = 'ddate'
+    response = "Not sure what you mean. Use the *commands* command to get a list of flowbot commands"
     if 'ddate' in command:
         response = Popen(['ddate'], stdout=PIPE).communicate()[0]
     elif 'commands' in command:
