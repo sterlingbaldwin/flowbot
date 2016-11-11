@@ -20,17 +20,20 @@ def handle_command(command, channel):
     """
     commands = {
         'ddate': 'A tool for getting the dischordian date',
-        'commands': 'A list of commands for flowbot'
+        'commands': 'A list of commands for flowbot',
+        'repo': 'A link to the flowbot github repo'
     }
     EXAMPLE_COMMAND = commands.get('ddate')
     response = "Not sure what you mean. Use the *" + EXAMPLE_COMMAND + \
                "* command with numbers, delimited by spaces."
     if 'ddate' in command:
         response = Popen(['ddate'], stdout=PIPE).communicate()[0]
-    if 'commands' in command:
+    elif 'commands' in command:
         response = ''
         for cmd in commands:
             response += '{cmd}: {dsc}\n'.format(cmd=cmd, dsc=commands[cmd])
+    elif 'repo' in command:
+        response = 'https://github.com/sterlingbaldwin/flowbot'
     slack_client.api_call("chat.postMessage", channel=channel,
                           text=response, as_user=True)
 
