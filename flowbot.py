@@ -31,7 +31,8 @@ def handle_command(command, channel, user):
         'take note': 'Take a note, leave a message for yourself after the command',
         'my notes': 'List all your notes',
         'cowsay': 'Say something like a cow',
-        'samsay': 'What would Sam say?'
+        'samsay': 'What would Sam say?',
+        'hey': 'Right back at you kid'
         # 'github': 'First, send a command to flowbot in a private channel with ' + \
         #     '\'github set username=<your_user> password=<your_pass\' ' + \
         #     '\n\tThen you have access to the following github commands: ' + \
@@ -96,13 +97,38 @@ def handle_command(command, channel, user):
             samsay.append(new)
             with open('samsay.json', 'w') as outfile:
                 json.dump(samsay, outfile)
-            response = 'Added new samsay ' + new
+            response = 'Added new samsay: ' + new
+        elif 'remove' in command:
+            index_str = command[command.find('remove') + len('remove') + 1:]
+            index = int(index_str)
+            if index >= 0 and index < len(samsay):
+                response = 'Removing (#{index}): {comment}'.format(
+                    index=index,
+                    comment=samsay[index])
+                del samsay[index]
+            else:
+                response = 'Index {} out of range'.format(index)
         else:
-            response = samsay[random.randint(0, len(samsay) - 1)]
+            index = random.randint(0, len(samsay) - 1)
+            response = '(#{index}): {comment}'.format(
+                index=index,
+                comment=samsay[index])
     elif 'cowsay' in command:
-        print '[+] in cowsay'
-        response = Popen(['cowsay', command[command.find('cowsay') + len('cowsay') + 1:]], stdout=PIPE).communicate()[0]
-
+        response = Popen(['cowsay', '-f', 'stegosaurus', command[command.find('cowsay') + len('cowsay') + 1:]], stdout=PIPE).communicate()[0]
+        response = '```\n' + response + '```\n'
+        print response
+    elif 'hey' in command and command.find('hey') < 10:
+        hey = [
+            'My life for Aiur',
+            'How may I serve?',
+            'What a lovely lovely day!',
+            'Shouldn\'t you be working?',
+            'How much wood would a woodchuck chuck if a woodchuck could chuck wood?',
+            'This is your top priority',
+            'But how does it scale?',
+            'I\'m not sure how I feel about this',
+            'Check out my mad flow https://www.youtube.com/watch?v=HLUX0y4EptA']
+        response = hey[random.randint(0, len(hey) - 1)]
 
     slack_client.api_call("chat.postMessage", channel=channel,
                           text=response, as_user=True)
